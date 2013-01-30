@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>实时拓扑</title>
+<script type="text/javascript" src="../src/easeljs/utils/UID.js"></script>
+<script type="text/javascript" src="../src/easeljs/geom/Matrix2D.js"></script>
+<script type="text/javascript" src="../src/easeljs/display/DisplayObject.js"></script>
+<script type="text/javascript" src="../src/easeljs/display/Container.js"></script>
+<script type="text/javascript" src="../src/easeljs/display/Stage.js"></script>
+<script type="text/javascript" src="../src/easeljs/events/MouseEvent.js"></script>
+<script type="text/javascript" src="../src/easeljs/display/Shape.js"></script>
+<script type="text/javascript" src="../src/easeljs/display/Graphics.js"></script>
+<script type="text/javascript" src="../src/easeljs/utils/Ticker.js"></script>
+<script type="text/javascript" src="../src/easeljs/display/Text.js"></script>
+<script type="text/javascript" src="../src/easeljs/ui/Touch.js"></script>
+<script type="text/javascript" src="../src/easeljs/display/Bitmap.js"></script>
+<script src="js/jquery-1.4.4.min.js"></script>
+<script src="assets/my.js"></script>
+<style>
+html * { margin:0; padding: 0;}
+body { text-align:center; font-size:14px;}
+#wp { width:1024px; margin:0 auto; }
+#hd { height:80px; background:transparent url('img/mainbar60080.jpg') no-repeat right center; }
+#logo { height:100%; background:transparent url('img/logo_s.png') no-repeat; text-indent:-999em; }
+#bd { height:620px; }
+
+.google{
+	width:104px;
+}
+#nav{
+	width:1024px;
+	height:23px;
+}
+li{
+	list-style:none;
+	float:left;
+	width:100px;
+	border:#000 1px solid;
+	
+	
+}
+li a{
+	display:block;
+	padding: 2px 0;
+	height:18px;
+	font-size:12px;
+	text-decoration:none;
+	color:#000;
+	background:url(img/navBarGrey.png) repeat-x;
+}
+li a:hover{
+	background:#f0f0f0;
+}
+.on{
+	background:#f0f0f0;
+}
+#optoin{
+	background:#95AAB4;
+	border: 1px solid #000;
+	text-align:left;
+	padding-top:30px ;
+	padding-left:15px;
+	height:50px;
+}
+#data{
+
+	border-left:1px #000 solid;
+	border-right:1px #000 solid;
+	border-bottom:1px #000 solid;
+	height:1000px;
+	text-align:left;
+}
+
+p {
+	margin:	10px 0;
+}
+
+#header {
+	padding:			20px;
+	background-color:	#222;
+}
+	#header h1 {
+		font-weight:	normal;
+		font-size:		24px;
+		margin:			0;
+		padding:		0;
+	}
+
+	#header p {
+		margin:		0;
+		padding:	0;
+
+		font-size:	14px;
+		color:		#777;
+	}
+
+	#header:after{
+		content:	"";
+		position:	absolute;
+	}
+
+
+#data .content {
+	width:		980px;
+	height:		420px;
+	padding:	10px;
+
+	position:		absolute;
+	top:			50%;
+	left:			50%;
+	margin-top:		-210px;
+	margin-left:	-490px;
+
+	color:			#777;
+
+	border:				1px solid #555;
+	background-color:	#ccc;
+}
+
+#loader {
+	display: none;
+}
+.loader {
+	width: 100%;
+	height: 50px;
+	position: absolute;
+	text-align:center;
+	margin-top: 250px;
+	background: url('loader.gif') no-repeat;
+	background-position: 50% 50%;
+	display: block !important;
+}
+
+#error {
+	display:none;
+	width: 960px;
+	text-align: left;
+	padding: 10px;
+}
+#nodeList{
+	width:210px;
+	float:left;
+	position:relative;
+}
+.canvasHolder{
+	position:relative;
+	float:right;
+	width:800px;
+	height:485px;
+	background:url("assets/baidumap.png");
+}
+.canvasHolder .head{
+	position:absolute;
+	top:0;
+	left:0;
+}
+.full{
+	background:url(assets/node.png);
+}
+.empty{
+	vertical-align:middle;
+	text-align:center;
+	color:#ff0;
+}
+</style>
+</head>
+
+<body onload="init();">
+
+<div id="wp">
+    <div id="hd">
+	    <h1 id="logo">SmeshLink</h1>
+    </div>
+	<div id="nav">
+    	<ul>
+    		<li><a href="livedata.html">实时数据</a></li>
+            <li><a href="newdata.html">最新数据</a></li>
+            <li><a href="livedatatopology.html" class="on">实时拓扑</a></li>
+            <li><a href="livedatacurve.html">实时曲线</a></li>
+            <li><a href="historydata.html">历史数据</a></li>
+            <li><a href="historyDataCurve.html">历史曲线</a></li>
+            <li class="google"><a href="googlemap.html">Google地图</a></li>
+            <li><a href="userManage.html">用户管理</a></li>
+            <li><a href="systemsetting.html">系统设置</a></li>
+            <li><a href="exit.html">退出系统</a></li>
+        </ul>
+    </div>
+    <div id="optoin">
+    	选择节点：
+    	<select>
+        	<option>所有节点</option>
+        </select>
+        传感器类型：
+        <select>
+        	<option>所有节点</option>
+        </select>
+    </div>
+    <div id="data">
+    	<div id="loader"></div>
+        <div id="nodeList">
+        	<table cellspacing="15px">
+            	<tr height="50px;">
+                	<td class="empty" width="50px">1</td>
+                    <td class="empty" width="50px">1</td>
+                    <td class="empty" width="50px">1</td>
+                </tr>
+            	<tr height="50px;">
+                	<td class="empty" width="50px">1</td>
+                    <td class="empty" width="50px">1</td>
+                    <td class="empty" width="50px">1</td>
+                </tr>
+                <tr height="50px;">
+                	<td class="empty" width="50px">1</td>
+                    <td class="empty" width="50px">1</td>
+                    <td class="empty" width="50px">1</td>
+                </tr>
+            	<tr height="50px;">
+                	<td class="empty" width="50px">1</td>
+                    <td class="empty" width="50px">1</td>
+                    <td class="empty" width="50px">1</td>
+                </tr>
+            </table>
+            
+        </div>
+		<div class="canvasHolder">
+        	<div class="head">sdfsfd</div>
+			<canvas id="testCanvas" width="800" height="485"></canvas>
+		</div>
+    </div>
+</div>
+</body>
+</html>

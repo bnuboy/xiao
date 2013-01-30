@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>实时定位</title>
+	<script type="text/javascript" src="src/smeshlink/smeshlinkDate.js"></script>
+	<script type="text/javascript" src="src/smeshlink/smeshlinkArray.js"></script>
+	<script type="text/javascript" src="src/smeshlink/smeshlinkHashMap.js"></script>
+	<script type="text/javascript" src="src/smeshlink/smeshlinkTime.js"></script>
+	<script type="text/javascript" src="src/xmlrpc/rpc.js"></script>
+	<script type="text/javascript" src="src/smeshlink/myrpc.js"></script>
+	<script type="text/javascript" src="src/easeljs/utils/UID.js"></script>
+	<script type="text/javascript" src="src/easeljs/geom/Matrix2D.js"></script>
+	<script type="text/javascript" src="src/easeljs/display/DisplayObject.js"></script>
+	<script type="text/javascript" src="src/easeljs/display/Container.js"></script>
+	<script type="text/javascript" src="src/easeljs/display/Stage.js"></script>
+	<script type="text/javascript" src="src/easeljs/events/MouseEvent.js"></script>
+	<script type="text/javascript" src="src/easeljs/display/Shape.js"></script>
+	<script type="text/javascript" src="src/easeljs/display/Graphics.js"></script>
+	<script type="text/javascript" src="src/easeljs/geom/Point.js"></script>
+	<script type="text/javascript" src="src/easeljs/utils/Ticker.js"></script>
+	<script type="text/javascript" src="src/easeljs/display/Text.js"></script>
+	<script type="text/javascript" src="src/easeljs/ui/Touch.js"></script>
+	<script type="text/javascript" src="src/easeljs/display/Bitmap.js"></script>
+	<script type="text/javascript" src="src/easeljs/preloadjs-0.1.0.min.js"></script>
+	<script type="text/javascript" src="src/smeshlink/Circle.js"></script>
+	<script type="text/javascript" src="src/smeshlink/Node.js"></script>
+	<script type="text/javascript" src="src/smeshlink/Base.js"></script>
+	<script type="text/javascript" src="src/smeshlink/SPoint.js"></script>
+	<script type="text/javascript" src="src/smeshlink/Line.js"></script>
+	<script type="text/javascript" src="src/smeshlink/Point.js"></script>
+	<script type="text/javascript" src="src/smeshlink/Calculate.js"></script>
+	<script type="text/javascript" src="src/smeshlink/Target.js"></script>
+	<script type="text/javascript" src="src/smeshlink/BackGround.js"></script>
+	<script type="text/javascript" src="js/cookies.js"></script>
+	<script type="text/javascript" src="src/smeshlink/location.js"></script>
+	<script type="text/javascript" src="js/tinybox.js"></script>
+	<style>
+		html * { margin:0; padding: 0;}
+		body { text-align:center; font-size:14px;}
+		#hd { height:80px; background:transparent url('img/mainbar60080.jpg') no-repeat right center; }
+		#logo { height:100%; background:transparent url('img/logo_s.png') no-repeat; text-indent:-999em; }
+		#nav{
+			width:1024px;
+			height:24px;
+			text-align:center;
+			margin:0;
+			padding:0;
+		}
+		#nav ul{
+			margin:0;
+			padding:0;
+		}
+		#nav ul li{
+			list-style:none;
+			float:left;
+			width:126px;
+			border:#000 1px solid;
+		}
+		#nav ul li a{
+			display:block;
+			padding: 2px 0;
+			height:18px;
+			font-size:12px;
+			text-decoration:none;
+			color:#000;
+			background:url(img/navBarGrey.png) repeat-x;
+		}
+		#nav ul li a:hover{
+			background:#f0f0f0;
+		} 
+		#data{
+			postion:relative;
+		}
+		#config{
+			background:#99AA99;
+			width:100%;
+			height:30px;
+			line-height:30px;
+			vertical-align:middle;
+		}
+		#config ul{
+			list-style:none;
+		}
+		#config ul li{
+			list-style:none;
+			float:right;
+			margin-left:2px;
+			width:100px;
+			font-weight:bold;
+			font-style:italic;			
+			background:#eff;
+		}
+		#config ul li:hover{
+			background:#f0f0f0;
+			cursor:pointer;
+		}
+		.tbox {position:absolute; display:none; padding:14px 17px; z-index:900}
+		.tinner {padding:15px; -moz-border-radius:5px; border-radius:5px; background:#fff url(img/preload.gif) no-repeat 50% 50%; border-right:1px solid #333; border-bottom:1px solid #333}
+		.tmask {position:absolute; display:none; top:0px; left:0px; height:100%; width:100%; background:#000; z-index:800}
+		.tclose {position:absolute; top:0px; right:0px; width:30px; height:30px; cursor:pointer; background:url(img/close.png) no-repeat}
+		.tclose:hover {background-position:0 -30px}
+	</style>
+</head>
+<body onload="init()">
+	<div style="width:1024px;margin:0 auto;">
+		<div id="hd">
+	    	<h1 id="logo">SmeshLink</h1>
+    	</div>
+    	<div id="nav">
+    	<ul>
+    		<li><a href="livedata.html">实时数据</a></li>
+            <li><a href="newdata.html">最新数据</a></li>
+            <li><a href="livedatatopology.html">实时拓扑</a></li>
+            <!-- <li><a href="livedatacurve.html">实时曲线</a></li> -->
+            <li><a href="historydata.html">历史数据</a></li>
+            <li><a href="historyDataCurve.html">历史曲线</a></li>
+            <li class="google"><a href="baidumap.html" class="on">Baidu地图</a></li>
+            <li><a href="userManage.html">用户管理</a></li>
+            <li><a href="systemsetting.html">系统设置</a></li>
+            <li><a href="exit.html">退出系统</a></li>
+        </ul>
+    	</div>
+		<div style="background:#95AAB4;color:#000;text-align:left;" id="infomation">
+			<div id="nodeInfo">节点坐标</div>
+			<div id="hint">
+				正在加载资源请稍后。。。
+			</div>
+		</div>
+		<div id="config">
+			<div style="float:left;font-style:italic;">
+				<select id="type" style="height:30px;display:none;"></select>
+			</div>
+			<ul>
+				<li onclick="upload();">上传</li>
+				<li onclick="config();">配置</li>
+			</ul>
+		</div>
+		<div id="data">
+			<canvas id="canvas" width="1024" height="660" style="width:1024px;height:660px;background:#eee;"></canvas>
+		</div>
+	</div>
+</body>
+</html>

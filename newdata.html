@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>最新数据</title>
+
+<style>
+html * { margin:0; padding: 0;}
+body { text-align:center; font-size:12px;}
+#wp { width:1024px; margin:0 auto; }
+#hd { height:80px; background:transparent url('img/mainbar60080.jpg') no-repeat right center; }
+#logo { height:100%; background:transparent url('img/logo_s.png') no-repeat; text-indent:-999em; }
+#bd { height:620px; }
+
+.google{
+	width:104px;
+}
+#nav{
+	width:1024px;
+	height:23px;
+}
+li:nth-of-type(odd){
+	list-style:none;
+	float:left;
+	width:112px;
+	border:#696969 1px solid;
+}
+li:nth-of-type(even){
+	list-style:none;
+	float:left;
+	width:113px;
+	border-top:#696969 1px solid;
+	border-bottom:#696969 1px solid;
+}
+li:first-of-type{
+	width:114px;
+}
+li a{
+	display:block;
+	padding: 2px 0;
+	height:18px;
+	font-size:12px;
+	text-decoration:none;
+	color:#000;
+	background:url(img/navBarGrey.png) repeat-x;
+}
+li a:hover{
+	background:#f0f0f0;
+}
+.on{
+	background:#f0f0f0;
+}
+#optoin{
+	background:#95AAB4;
+	border: 1px solid #696969;
+	text-align:left;
+	padding-top:30px ;
+	padding-left:15px;
+	height:50px;
+}
+#data{
+
+	border-left:1px #696969 solid;
+	border-right:1px #696969 solid;
+	border-bottom:1px #696969 solid;
+	height:1000px;
+	overflow-y:scroll;
+}
+.even{
+	background:#EFF3FA;
+	height:20px;
+}
+.odd{
+	background:#fff;
+	height:20px;
+}
+.head{
+	height:25px;
+	background:url(img/table_head.png) repeat-x;
+}
+.odd:hover{
+	background:#06F;
+}
+.even:hover{
+	background:#06F;
+}
+</style>
+<script src="js/jquery-1.4.4.min.js"></script>
+<script src="js/rpc.js"></script>
+<script src="js/myrpc.js"></script>
+<script type="text/javascript" src="js/cookies.js"></script>
+<script type="text/javascript" src="js/newdata.js"></script>
+</head>
+
+<body>
+
+<div id="wp">
+    <div id="hd">
+	    <h1 id="logo">SmeshLink</h1>
+    </div>
+	<div id="nav">
+    	<ul>
+    		<li><a href="livedata.html">实时数据</a></li>
+    		<li><a href="newdata.html" class="on">最新数据</a></li>
+            <li><a href="livedatatopology.html">实时拓扑</a></li>
+            <li><a href="historydata.html">历史数据</a></li>
+            <li><a href="historyDataCurve.html">历史曲线</a></li>
+            <li class="google"><a href="baidumap.html">Baidu地图</a></li>
+            <li><a href="userManage.html">用户管理</a></li>
+            <li><a href="systemsetting.html">系统设置</a></li>
+            <li><a href="exit.html">退出系统</a></li>
+        </ul>
+    </div>
+    <div id="optoin">
+        传感器类型：
+        <select id="seltype" onchange="sendConfig(this)">
+        	<option>所有节点</option>
+        </select>
+    </div>
+    <div id="data">
+    </div>
+</div>
+</body>
+</html>

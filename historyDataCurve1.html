@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>实时数据</title>
+<script src="js/hsd.js"></script><!-- 好像不要也可以 -->
+<script src="js/prototype.min.js"></script>
+<script src="js/Finance.js"></script>
+<script src="js/excanvas.js"></script>
+<script src="js/base64.js"></script>
+<script src="js/canvas2image.js"></script>
+<script src="js/canvastext.js"></script>
+<script src="js/flotr.js"></script>
+<script src="js/HumbleFinance.js"></script>
+<script src="js/data.js"></script>
+<script src="js/demo.js"></script>
+<link rel="stylesheet" type="text/css" href="css/hsd.css" />
+<style>
+html * { margin:0; padding: 0;}
+body { text-align:center; font-size:14px;}
+#wp { width:1024px; margin:0 auto; }
+#hd { height:80px; background:transparent url('img/mainbar60080.jpg') no-repeat right center; }
+#logo { height:100%; background:transparent url('img/logo_s.png') no-repeat; text-indent:-999em; }
+#bd { height:620px; }
+
+.google{
+	width:104px;
+}
+#nav{
+	width:1024px;
+	height:23px;
+}
+li{
+	list-style:none;
+	float:left;
+	width:100px;
+	border:#000 1px solid;
+	
+	
+}
+li a{
+	display:block;
+	padding: 2px 0;
+	height:18px;
+	font-size:12px;
+	text-decoration:none;
+	color:#000;
+	background:url(img/navBarGrey.png) repeat-x;
+}
+li a:hover{
+	background:#f0f0f0;
+}
+.on{
+	background:#f0f0f0;
+}
+#optoin{
+	background:#95AAB4;
+	border: 1px solid #000;
+	text-align:left;
+	padding-top:30px ;
+	padding-left:15px;
+	height:50px;
+}
+#data{
+
+	border-left:1px #000 solid;
+	border-right:1px #000 solid;
+	border-bottom:1px #000 solid;
+	height:1000px;
+	padding-top:30px;
+}
+.title {
+    text-align: center;
+}
+.subTitle {
+    font-size: 16px;
+}
+
+#finance {
+    position: relative;
+    margin: 40px auto;
+    border: 1px solid #99CCFF;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+#labels {
+    position: absolute;
+    width: 800px;
+    z-index: 10;
+}
+#financeTitle {
+    position: absolute;
+    top: -20px;
+}
+#time {
+    position: absolute;
+    left: 4px;
+    top: -24px;
+    font-size: 10px; 
+    z-index: 10;
+}
+#time a {
+    background: #ffffff;
+    cursor: pointer;
+    border-right: 2px solid transparent;
+    color: #4499FF;
+    text-decoration: underline;
+}
+#dateRange {
+    position: absolute;
+    right: 4px;
+    top: -14px;
+    font-size: 10px;
+}
+.handle {
+    position: absolute;
+    z-index: 10;
+    cursor: pointer;
+    background: #eeeeee; 
+    border: 1px solid #bbbbbb; 
+    border-radius: 3px;
+    -webkit-border-radius: 3px; 
+    -moz-border-radius: 3px;
+}
+.zoomHandle {
+    width: 5px; 
+    height: 20px; 
+}
+.scrollHandle {
+    width: 100px;
+    height: 12px;
+}
+.flag {
+    border: 1px solid #4499FF;
+    background: white;
+    padding: 1px 2px 1px 2px;
+}
+.flagpole {
+    border-left: 1px solid #4499FF;
+}
+.flotr-grid-label {
+    font-size: 11px;
+    background: #ffffff transparent;
+    margin: 2px 0px 0px 4px;
+}
+.flotr-mouse-value {
+    font-size: 10px;
+}
+#summaryGraph .flotr-grid-label {
+    margin-top: -16px;
+    background: transparent;
+    text-align: left;
+}
+.documentation p {
+    font-size: 14px;
+    padding-left: 20px;
+    padding-right: 8px;
+}
+.documentation ol {
+    font-size: 14px;
+}
+.documentation h3 {
+    padding-top: 12px;
+}
+.documentation h4 {
+    padding-left: 20px;
+    font-size: 14px;
+}
+.documentation p code {
+    font-size: 12px;
+}
+.documentation .snippet {
+    margin-left: 20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="wp">
+    <div id="hd">
+	    <h1 id="logo">SmeshLink</h1>
+    </div>
+	<div id="nav">
+    	<ul>
+    		<li><a href="livedata.html">实时数据</a></li>
+            <li><a href="newdata.html">最新数据</a></li>
+            <li><a href="livedatatopology.html">实时拓扑</a></li>
+            <!-- <li><a href="livedatacurve.html">实时曲线</a></li> -->
+            <li><a href="historydata.html">历史数据</a></li>
+            <li><a href="historyDataCurve.html" class="on">历史曲线</a></li>
+            <li class="google"><a href="baidumap.html">Baidu地图</a></li>
+            <li><a href="userManage.html">用户管理</a></li>
+            <li><a href="systemsetting.html">系统设置</a></li>
+            <li><a href="exit.html">退出系统</a></li>
+        </ul>
+    </div>
+    <div id="optoin">
+    	选择节点：
+    	<select>
+        	<option>所有节点</option>
+        </select>
+        传感器类型：
+        <select>
+        	<option>所有节点</option>
+        </select>
+    </div>
+    <div id="data">
+    	<div id="finance" style="width:960px; height:300px;>
+  <div id="labels">
+    <div id="financeTitle"></div>
+    <div id="time">
+      <a onclick="HumbleFinance.zoom(5);">1w</a>
+      <a onclick="HumbleFinance.zoom(21);">1m</a>
+      <a onclick="HumbleFinance.zoom(65);">3m</a>
+      <a onclick="HumbleFinance.zoom(127);">6m</a>
+      <a onclick="HumbleFinance.zoom(254);">1y</a>
+      <a onclick="HumbleFinance.zoom(1265);">5y</a>
+    </div>
+    <div id="dateRange" ></div>
+  	</div>
+	</div>
+    
+    </div>
+</div>
+</body>
+</html>

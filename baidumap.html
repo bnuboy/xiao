@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="initial-scale=1.0,user-scalable=no"/>
+<title>实时数据</title>
+<style>
+html * { margin:0; padding: 0;}
+body { text-align:center; font-size:14px;}
+#wp { width:1024px; margin:0 auto; }
+#hd { height:80px; background:transparent url('img/mainbar60080.jpg') no-repeat right center; }
+#logo { height:100%; background:transparent url('img/logo_s.png') no-repeat; text-indent:-999em; }
+#bd { height:620px; }
+
+.google{
+	width:104px;
+}
+#nav{
+	width:1024px;
+	height:23px;
+}
+li{
+	list-style:none;
+	float:left;
+	width:129px;
+	border:#000 1px solid;
+	
+	
+}
+li a{
+	display:block;
+	padding: 2px 0;
+	height:18px;
+	font-size:12px;
+	text-decoration:none;
+	color:#000;
+	background:url(img/navBarGrey.png) repeat-x;
+}
+li a:hover{
+	background:#f0f0f0;
+}
+.on{
+	background:#f0f0f0;
+}
+#optoin{
+	background:#95AAB4;
+	border: 1px solid #000;
+	text-align:left;
+	padding-top:30px ;
+	padding-left:15px;
+	height:50px;
+}
+#data{
+
+	border-left:1px #000 solid;
+	border-right:1px #000 solid;
+	border-bottom:1px #000 solid;
+	height:400px;
+}
+</style>
+<script type="text/javascript" src="src/xmlrpc/rpc.js"></script>
+<script type="text/javascript" src="js/cookies.js"></script>
+<script src ="http://api.map.baidu.com/api?v=1.3" type ="text/javascript" ></script >
+<script type="text/javascript">
+	var uri= "";//"http://127.0.0.1:800/xmlrpc";
+	var msg;
+	var client= null;//new XMLRPCClient(uri);
+	var map = null;
+	function initialize() {
+		if(getCookie("islogin") == null){
+			alert("请先登录");
+			location.href="index.html";
+		}
+		getAllNodes();
+		map = new BMap.Map('map');
+        map.centerAndZoom(new BMap.Point(116.404, 39.915),11);
+        map.addControl(new BMap.NavigationControl());
+        map.addControl(new BMap.ScaleControl());
+        map.enableScrollWheelZoom();
+	}
+	function loadScript(){
+		var script = document.createElement("script");
+		script.src="http://api.map.baidu.com/api?v=1.3&callback=initialize";
+		document.body.appendChild(script);
+	}
+	function getAllNodes(){
+		var host = document.location.host;
+		uri = "http://" + host + "/xmlrpc";
+		client=new XMLRPCClient(uri);
+	    msg=new XMLRPCMessage("TopData.getAllNodes");
+	    try{
+			client.send(msg.xml(),true,recAllNodes);
+		   }catch(x){
+			alert(x);   
+		}
+	}
+	function recAllNodes(req){
+		var resp = new XMLRPCResponse(req);
+		if(resp.faultCode()){
+			alert(" ERROR: /n"+ "faultCode:"+resp.faultCode()+" /n faultString:"+resp.faultString());
+			return;
+		}
+		var arr = resp.value();
+		var myIcon = new BMap.Icon("img/n.png",new BMap.Size(40,40));
+		for(var i = 0; i < arr.length; i ++){
+			if(arr[i].latitude != "" && arr[i].longitude != ""){
+				console.log(arr[i].nodeid + "   " +arr[i].latitude + "    " + arr[i].longitude);
+				var point = new BMap.Point(arr[i].longitude,arr[i].latitude);
+				var marker = new BMap.Marker(point,{icon:myIcon});
+				var label  = new BMap.Label(arr[i].nodeid);
+				label.setStyle({ color : "red", fontSize : "18px", border : "0",backgroundColor:"transparent",width : "100px",height:"100px" });
+				label.setOffset(new BMap.Size(15,10));
+				marker.setLabel(label);
+				map.addOverlay(marker);
+			}
+		}
+		
+	}
+	window.onload = loadScript;
+</script>
+</head>
+
+<body onLoad="initialize();">
+
+<div id="wp">
+    <div id="hd">
+	    <h1 id="logo">SmeshLink</h1>
+    </div>
+	<div id="nav">
+    	<ul>
+    		<li><a href="livedata.html">实时数据</a></li>
+            <li><a href="newdata.html">最新数据</a></li>
+            <li><a href="livedatatopology.html">实时拓扑</a></li>
+            <!-- <li><a href="livedatacurve.html">实时曲线</a></li> -->
+            <li><a href="historydata.html">历史数据</a></li>
+            <li><a href="historyDataCurve.html">历史曲线</a></li>
+            <li class="google"><a href="baidumap.html" class="on">Baidu地图</a></li>
+            <li><a href="userManage.html">用户管理</a></li>
+            <li><a href="systemsetting.html">系统设置</a></li>
+            <li><a href="exit.html">退出系统</a></li>
+        </ul>
+    </div>
+    <div id="optoin">
+    	
+    </div>
+    <div id="data">
+    	<div id="map" style="width:100%;height:100%;"></div>
+    </div>
+</div>
+</body>
+</html>

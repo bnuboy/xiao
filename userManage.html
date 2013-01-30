@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>实时数据</title>
+
+<style>
+html * { margin:0; padding: 0;}
+body { text-align:center; font-size:14px;}
+#wp { width:1024px; margin:0 auto; }
+#hd { height:80px; background:transparent url('img/mainbar60080.jpg') no-repeat right center; }
+#logo { height:100%; background:transparent url('img/logo_s.png') no-repeat; text-indent:-999em; }
+#bd { height:620px; }
+
+.google{
+	width:104px;
+}
+#nav{
+	width:1024px;
+	height:23px;
+}
+li{
+	list-style:none;
+	float:left;
+	width:100px;
+	border:#000 1px solid;
+	
+	
+}
+li a{
+	display:block;
+	padding: 2px 0;
+	height:18px;
+	font-size:12px;
+	text-decoration:none;
+	color:#000;
+	background:url(img/navBarGrey.png) repeat-x;
+}
+li a:hover{
+	background:#f0f0f0;
+}
+.on{
+	background:#f0f0f0;
+}
+#optoin{
+	background:#95AAB4;
+	border: 1px solid #000;
+	text-align:left;
+	padding-top:10px ;
+	padding-left:15px;
+	padding-bottom:10px;
+}
+#optoin input[type=button]{
+	width:80px;
+	height:25px;
+}
+input[name=cancel]{
+	display:none;
+}
+input[name=del]{
+	display:none;
+}
+#data{
+
+	border-left:1px #000 solid;
+	border-right:1px #000 solid;
+	border-bottom:1px #000 solid;
+	height:500px;
+	overflow:scroll;
+}
+.even{
+	background:#EFF3FA;
+	height:20px;
+}
+.odd{
+	background:#fff;
+	height:20px;
+}
+.head{
+	height:30px;
+	background:url(img/table_head.png) repeat-x;
+}
+.odd:hover{
+	background:#06F;
+}
+.even:hover{
+	background:#06F;
+}
+</style>
+<script src="js/jquery-1.8.0.min.js"></script>
+<script type="text/javascript" src="src/xmlrpc/rpc.js"></script>
+<script type="text/javascript" src="js/cookies.js"></script>
+<script type="text/javascript" src="js/tinybox.js"></script>
+<script>
+$(function(){
+	if(getCookie("islogin") == null){
+		alert("请先登录");
+		location.href="index.html";
+	}
+	var roleId = getCookie("roleId");
+	
+	var uri= "";
+	var msg;
+	var client= null;
+	var host = document.location.host;
+	uri = "http://" + host + "/xmlrpc";
+	client=new XMLRPCClient(uri);
+    msg=new XMLRPCMessage("UserData.getAllUsers");
+	try{
+		client.send(msg.xml(),true,listusers);
+	   }catch(x){
+		alert(x);   
+	}
+	function listusers(req){
+		var resp = new XMLRPCResponse(req);
+		if(resp.faultCode()){
+			alert(" ERROR: /n"+ "faultCode:"+resp.faultCode()+" /n faultString:"+resp.faultString());
+			return;
+		}
+		var arr = resp.value();
+		for(var i = 0; i < arr.length; i ++){
+			var style = "odd";
+			var role  = "普通用户";
+			if(arr[i].roleId == 1){
+				role  = "管理员";
+			}
+			if(i % 2 == 0)
+				style = "even"
+			var str = "<tr class='" + style + "'>";
+			str += "<td>" + arr[i].userId +"</td>";
+			str += "<td>" + arr[i].username +"</td>";
+			str += "<td>" + arr[i].password +"</td>";
+			str += "<td>" + role +"</td>";
+			str += "</tr>";
+			$("table").eq(1).append(str);
+			
+		}
+
+		if(roleId == 1){
+			$("tr").each(function(i){
+				if(i > 3){
+					var $this = $(this);
+					$this.click(function(){
+						var num = $this.children().eq(0).text();
+						var username = $this.children().eq(1).text();
+						var password = $this.children().eq(2).text();
+						var usertype = $this.children().eq(3).text();
+						$("input[name='username']").val(username);
+						$("input[name='password']").val(password);
+						$("input[name='userId']").val(num);
+						if(usertype == "管理员"){
+							$("#manage").attr("checked","checked");
+						}else if(usertype == "普通用户"){
+							$("#common").attr("checked","checked");
+						}
+						$("input[name='button']").val("更新用户");
+						$("input[name='cancel']").show();
+						$("input[name='del']").show();
+					});
+				}
+			});
+			$("input[name='cancel']").click(function(){
+				$("input[name='button']").val("新增用户");
+				$("input[name='username']").val("");
+				$("input[name='password']").val("");
+				$("#manage").attr("checked","");
+				$("#common").attr("checked","");
+				$(this).hide();
+				$("input[name='del']").hide();
+			});
+			$("input[name='button']").click(function(){
+				var userId = $("input[name='userId']").val();
+				var username = $("input[name='username']").val();
+				var password = $("input[name='password']").val();
+				var type;
+				if($("#manage").attr("checked") == "checked"){
+					type = "1";
+				}else{
+					type = "2";
+				}
+				var $this = $(this);
+				var text = $this.val();
+				if(text == "新增用户"){
+					msg.setMethod("UserData.addNewUser");
+					msg.params = [username,password,parseInt(type)];
+					try{
+						client.send(msg.xml(),true,addBack);
+					}catch(x){
+						alert(x);   
+					}
+				}else if(text == "更新用户"){
+					msg.setMethod("UserData.changeUserMsg");
+					msg.params = [parseInt(type),password,parseInt(userId)];
+					try{
+						client.send(msg.xml(),true,updateBack);
+					}catch(x){
+						alert(x);   
+					}
+				}
+				
+			});
+			$("input[name='del']").click(function(){
+				var userId = $("input[name='userId']").val();
+				msg.setMethod("UserData.deleteUser");
+				msg.params = [parseInt(userId)];
+				try{
+					client.send(msg.xml(),true,delBack);
+				}catch(x){
+					alert(x);   
+				}
+				
+			});
+			function addBack(req){
+				var resp=new XMLRPCResponse(req);
+				if(resp.faultCode()){
+					 alert(" ERROR: /n"+ "faultCode:"+resp.faultCode()+" /n faultString:"+resp.faultString());
+					 return;
+				}
+				var array = resp.value();
+				if(array.toString() == "true"){
+					alert("新增用户成功");
+				}else{
+					alert("新增用户失败");
+				}
+				location.reload() 
+			}
+			function delBack(req){
+				var resp=new XMLRPCResponse(req);
+				if(resp.faultCode()){
+					 alert(" ERROR: /n"+ "faultCode:"+resp.faultCode()+" /n faultString:"+resp.faultString());
+					 return;
+				}
+				var array = resp.value();
+				console.log(array);
+				if(array.toString() == "true"){
+					alert("删除用户成功");
+				}else{
+					alert("删除用户失败");
+				}
+				location.reload() 
+			}
+			function updateBack(req){
+				resp=new XMLRPCResponse(req);
+				if(resp.faultCode()){
+					 alert(" ERROR: /n"+ "faultCode:"+resp.faultCode()+" /n faultString:"+resp.faultString());
+					 return;
+				}
+				var array = resp.value();
+				var array = resp.value();
+				if(array.toString() == "true"){
+					alert("更新用户成功");
+				}else{
+					alert("更新用户失败");
+				}
+				location.reload() 
+			}
+		}else{
+			$("form").hide();
+		}
+	}
+});
+</script>
+</head>
+
+<body>
+
+<div id="wp">
+    <div id="hd">
+	    <h1 id="logo">SmeshLink</h1>
+    </div>
+	<div id="nav">
+    	<ul>
+    		<li><a href="livedata.html" class="on">实时数据</a></li>
+            <li><a href="newdata.html">最新数据</a></li>
+            <li><a href="livedatatopology.html">实时拓扑</a></li>
+            <li><a href="livedatacurve.html">实时曲线</a></li>
+            <li><a href="historydata.html">历史数据</a></li>
+            <li><a href="historyDataCurve.html">历史曲线</a></li>
+            <li class="google"><a href="baidumap.html">Baidu地图</a></li>
+            <li><a href="userManage.html">用户管理</a></li>
+            <li><a href="systemsetting.html">系统设置</a></li>
+            <li><a href="exit.html">退出系统</a></li>
+        </ul>
+    </div>
+    <div id="optoin">
+    	<form>
+    		<table>
+    			<tr>
+    				<td>用户名：</td>
+    				<td><input type="text" name="username"/><input type="hidden" name="userId"></td>
+    			</tr>
+    			<tr>
+    				<td>密码：</td>
+    				<td><input type="password" name="password"/></td>
+    			</tr>
+    			<tr>
+    				<td>用户类型：</td>
+    				<td><input type="radio" name="usertype" id="manage"/>管理员<input type="radio" name="usertype" id="common"/>普通用户</td>
+    			</tr>
+    			<tr>
+    				<td><input type="button" name="del" value="删除用户"/></td>
+    				<td><input type="button" name="button" value="新增用户"/><input type="button" name="cancel" value="取消" /></td>
+    			</tr>
+    		</table>
+    	</form>
+    </div>
+    <div id="data">
+    	<table width="100%" bgcolor="#000000" cellspacing="1">
+        	<tr class="head">
+            	<td>用户编号</td>
+                <td>用户名</td>
+                <td>密码</td>
+                <td>用户类型</td>
+            </tr>
+        </table>
+    </div>
+</div>
+</body>
+</html>

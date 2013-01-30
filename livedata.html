@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>实时数据</title>
+<script src="js/jquery-1.4.4.min.js"></script>
+<script src="js/rpc.js"></script>
+<script type="text/javascript" src="js/cookies.js"></script>
+<script type="text/javascript" src="src/smeshlink/smeshlinkArray.js"></script>
+<script type="text/javascript" src="src/smeshlink/smeshlinkHashMap.js"></script>
+<script type="text/javascript" src="src/smeshlink/livedata.js"></script>
+<link href="css/global.css" type="text/css" rel="stylesheet"/>
+<style>
+body { text-align:center; font-size:12px;}
+#wp { width:1024px; margin:0 auto; }
+#hd { height:80px; background:transparent url('img/mainbar60080.jpg') no-repeat right center; }
+#logo { height:100%; background:transparent url('img/logo_s.png') no-repeat; text-indent:-999em; }
+#bd { height:620px; }
+
+.google{
+	width:104px;
+}
+#nav{
+	width:1024px;
+	height:23px;
+}
+#nav li:nth-of-type(odd){
+	list-style:none;
+	float:left;
+	width:112px;
+	border:#696969 1px solid;
+}
+#nav li:nth-of-type(even){
+	list-style:none;
+	float:left;
+	width:113px;
+	border-top:#696969 1px solid;
+	border-bottom:#696969 1px solid;
+}
+#nav li:first-of-type{
+	width:114px;
+}
+li a{
+	display:block;
+	padding: 2px 0;
+	height:18px;
+	font-size:12px;
+	text-decoration:none;
+	color:#000;
+	background:url(img/navBarGrey.png) repeat-x;
+}
+li a:hover{
+	background:#f0f0f0;
+}
+.on{
+	background:#f0f0f0;
+}
+#optoin{
+	background:#95AAB4;
+	border: 1px solid #696969;
+	text-align:left;
+	padding-left:15px;
+	padding-top:5px;
+	height:25px;
+}
+#config{
+	background:#95AAB4;
+	width:100%;
+	height:auto;
+	min-height:22px;
+	vertical-align:middle;
+	padding-top:6px;
+	border-bottom:2px solid #696969;
+}
+#config ul{
+	list-style:none;
+}
+#config ul li{
+	height:18px;
+	list-style:none;
+	float:left;
+	padding:2px 5px;
+	border-top:#696969 1px solid;
+	border-right:#696969 1px solid;
+	background: url("img/navBarGrey.png") repeat-x;
+}
+#config ul li:first-of-type{
+	list-style:none;
+	float:left;
+	padding:2px 5px;
+	border:#696969 1px solid;
+	border-bottom:0;
+	background: url("img/navBarGrey.png") repeat-x;
+}
+#config ul li:hover{
+	background:#f0f0f0;
+	cursor:pointer;
+}
+#data{
+
+	border-left:1px #696969 solid;
+	border-right:1px #696969 solid;
+	border-bottom:1px #696969 solid;
+	height:1000px;
+	overflow:scroll;
+}
+#data table{
+	display:none;
+}
+.even{
+	background:#EFF3FA;
+	height:20px;
+}
+.odd{
+	background:#fff;
+	height:20px;
+}
+.head{
+	height:25px;
+	background:url(img/table_head.png) repeat-x;
+}
+.odd:hover{
+	background:#06F;
+}
+.even:hover{
+	background:#06F;
+}
+</style>
+</head>
+
+<body onload="getLiveData()">
+
+<div id="wp">
+    <div id="hd">
+	    <h1 id="logo">SmeshLink</h1>
+    </div>
+	<div id="nav">
+    	<ul>
+    		<li><a href="livedata.html" class="on">实时数据</a></li>
+            <li><a href="newdata.html">最新数据</a></li>
+            <li><a href="livedatatopology.html">实时拓扑</a></li>
+            <li><a href="historydata.html">历史数据</a></li>
+            <li><a href="historyDataCurve.html">历史曲线</a></li>
+            <li class="google"><a href="baidumap.html">Baidu地图</a></li>
+            <li><a href="userManage.html">用户管理</a></li>
+            <li><a href="systemsetting.html">系统设置</a></li>
+            <li><a href="exit.html">退出系统</a></li>
+        </ul>
+    </div>
+    <div id="config">
+		<ul>
+		</ul>
+		<div style="clear:both"></div>
+	</div>
+    <div id="optoin">
+        传感器类型：
+        <select id="seltype" onchange="sendConfig(this)">
+        </select>
+    </div>
+    
+    <div id="data">
+    	
+    </div>
+</div>
+</body>
+</html>

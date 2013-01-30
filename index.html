@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>welcom to our site</title>
+<link href="css/global.css" type="text/css" rel="stylesheet"/>
+<script src="js/jquery-1.8.0.min.js"></script>
+<script src="js/rpc.js"></script>
+<script src="js/login.js"></script>
+<script type="text/javascript" src="js/cookies.js"></script>
+</head>
+<body>
+<div id="wp">
+    <div id="hd">
+	    <h1 id="logo">SmeshLink</h1>
+    </div>
+	<div id="nav">
+    	<ul>
+    		<li><a href="livedata.html">实时数据</a></li>
+            <li><a href="newdata.html">最新数据</a></li>
+            <li><a href="livedatatopology.html">实时拓扑</a></li>
+            <!-- <li><a href="livedatacurve.html">实时曲线</a></li> -->
+            <li><a href="historydata.html">历史数据</a></li>
+            <li><a href="historyDataCurve.html">历史曲线</a></li>
+            <li><a href="baidumap.html">Baidu地图</a></li>
+            <li><a href="userManage.html">用户管理</a></li>
+            <li><a href="systemsetting.html">系统设置</a></li>
+            <li><a href="exit.html">退出系统</a></li>
+        </ul>
+    </div>
+    <div id="main">
+    	<div id="login_out">
+	    	<div id="login">
+	        	<table width="100%">
+	            	<tr height="75px">
+	                	<td width="20%"></td>
+	                    <td width="60%"></td>
+	                    <td width="20%"></td>
+	                </tr>
+	                <tr height="25px">
+	                	<td width="20%"></td>
+	                    <td width="60%" style="font-weight:bold;">&nbsp;欢迎访问农业生产温湿度监测系统</td>
+	                    <td width="20%"></td>
+	                </tr>
+	                <tr height="90px">
+	                	<td></td>
+	                    <td>
+	                    	用户名：&nbsp;&nbsp;<input type="text" name="userName" id="userName" value="admin"/><br><br>
+	                                                                密&nbsp;&nbsp;码：&nbsp;&nbsp;<input type="password" name="password" id="password" value="123"/><br><br>
+							<input type="button" value="确定" style="width:75px;height:30px;" onClick="loginCheck()">
+						</td>
+	                    <td></td>
+	                </tr>
+	               
+	            </table>
+	        </div>
+	    </div>
+    </div>
+    
+</div>
+</body>
+</html>

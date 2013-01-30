@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>实时定位</title>
+	<script type="text/javascript" src="js/jquery-1.8.0.min.js"></script>
+	<script src="js/rpc.js"></script>
+	<script src="js/systemsetting.js"></script>
+	<script src="src/smeshlink/smeshlinkHashMap.js"></script>
+	<style>
+		html * { margin:0; padding: 0;}
+		body { text-align:center; font-size:14px;}
+		#hd { height:80px; background:transparent url('img/mainbar60080.jpg') no-repeat right center; }
+		#logo { height:100%; background:transparent url('img/logo_s.png') no-repeat; text-indent:-999em; }
+		#nav{
+			height:24px;
+			text-align:center;
+			margin:0;
+			padding:0;
+		}
+		#nav ul{
+			margin:0;
+			padding:0;
+		}
+		#nav ul li{
+			list-style:none;
+			float:left;
+			width:126px;
+			border:#000 1px solid;
+		}
+		#nav ul li a{
+			display:block;
+			padding: 2px 0;
+			height:18px;
+			font-size:12px;
+			text-decoration:none;
+			color:#000;
+			background:url(img/navBarGrey.png) repeat-x;
+		}
+		#nav ul li a:hover{
+			background:#f0f0f0;
+		} 
+		#data{
+			postion:relative;
+			text-align:center;
+			border-top:1px solid #fff;
+			border-left:1px solid;
+			border-right:1px solid;
+			border-bottom:1px solid;
+		}
+		#config{
+			background:#99AA99;
+			width:100%;
+			height:30px;
+			line-height:30px;
+			vertical-align:middle;
+		}
+		#config ul{
+			list-style:none;
+		}
+		#config ul li{
+			list-style:none;
+			float:right;
+			margin-left:2px;
+			width:100px;
+			font-weight:bold;
+			font-style:italic;			
+			background:#eff;
+		}
+		#config ul li:hover{
+			background:#f0f0f0;
+			cursor:pointer;
+		}
+		.tbox {position:absolute; display:none; padding:14px 17px; z-index:900}
+		.tinner {padding:15px; -moz-border-radius:5px; border-radius:5px; background:#fff url(img/preload.gif) no-repeat 50% 50%; border-right:1px solid #333; border-bottom:1px solid #333}
+		.tmask {position:absolute; display:none; top:0px; left:0px; height:100%; width:100%; background:#000; z-index:800}
+		.tclose {position:absolute; top:0px; right:0px; width:30px; height:30px; cursor:pointer; background:url(img/close.png) no-repeat}
+		.tclose:hover {background-position:0 -30px}
+	</style>
+</head>
+<body>
+	<div style="width:1024px;margin:0 auto;">
+		<div id="hd">
+	    	<h1 id="logo">SmeshLink</h1>
+    	</div>
+    	<div id="nav">
+    	<ul>
+    		<li><a href="livedata.html">实时数据</a></li>
+            <li><a href="newdata.html">最新数据</a></li>
+            <li><a href="livedatatopology.html">实时拓扑</a></li>
+            <!-- <li><a href="livedatacurve.html">实时曲线</a></li> -->
+            <li><a href="historydata.html">历史数据</a></li>
+            <li><a href="historyDataCurve.html">历史曲线</a></li>
+            <li class="google"><a href="baidumap.html" class="on">Baidu地图</a></li>
+            <li><a href="userManage.html">用户管理</a></li>
+            <li><a href="systemsetting.html">系统设置</a></li>
+            <li><a href="exit.html">退出系统</a></li>
+        </ul>
+    	</div>
+		<div style="background:#95AAB4;color:#fff;text-align:left;padding-left:15px;font-size:38px;height:50px;" id="infomation">
+			系统设置：
+		</div>
+		<div id="data">
+			<table style="width:700px;margin:30px auto;">
+				<!--<tr height="30px">
+					<td align="right">传感器类型：</td>
+					<td align="left"><select id="selType"></select></td>
+				</tr>-->
+				<tr height="30px">
+					<td align="right">输入节点：</td>
+					<td align="left"><input type="text" id="sensor"/><input type="checkbox" id="all">所有节点</td>
+				</tr>
+				<tr height="30px">
+					<td align="right">采样率设置(s)：</td>
+					<td align="left"><input type="text" id="rate"><input type="button" onclick="updateRate()" value="更新"/></td>
+				</tr>
+				<tr height="30px">
+					<td align="right">自定义命令：</td>
+					<td align="left">属性类型<input type="text" id="customType">属性值<input type="text" id="customValue"><input type="button" value="更新" onclick="customCommand()"/></td>
+				</tr>
+				<tr height="30px">
+					<td align="right">亮灯设置：</td>
+					<td align="left">属性类型<input type="text">属性值<input type="text"><input type="button" value="更新"/></td>
+				</tr>
+				<tr height="30px">
+					<td align="right">重启节点：</td>
+					<td align="left"><input type="button" value="重启节点" onclick="reset();"/></td>
+				</tr>
+				<tr height="30px">
+					<td align="right">功耗选择：</td>
+					<td align="left"><select><option value="">高功耗</option><option value="">每秒8次</option><option value="">每秒16次</option><option value="">每秒32次</option><option value="">每秒64次</option><option value="">每秒128次</option><option value="">每秒256次</option><option value="">每秒512次</option><option value="">每秒1024次</option></select>切换延时(s)<input type="text"><input type="button" value="更新"></td>
+				</tr>
+				<tr>
+					<td align="right">
+						<select id="type0"  style="width:225px;">
+							<option value="0">空置</option>
+							<option value="253">MXN880-STATUS（状态包）</option>
+							<option value="252">MXN820-STATUS（状态包）</option>
+						</select>
+					</td>
+					<td align="left">数据包间隔<input type="text" id="com0"/></td>
+				</tr>
+				<tr>
+					<td align="right">
+						<select id="type1">
+							<option value="0" >空置</option>
+							<option value="1">MXS1101（土壤温度）</option>
+							<option value="2">MXS1201（空气温湿度传感器）</option>
+							<option value="3">MXS1301（空气二氧化碳）</option>
+							<option value="4">MXS1401（土壤水分）</option>
+							<option value="5">MXS1501（太阳光照）</option>
+							<option value="6">MXS2101（摄像头）</option>
+							<option value="6">MXS2102（摄像头）</option>
+							<option value="7">MXS2201（GPS定位）</option>
+							<option value="8">MXS4101（接近传感器）</option>
+							<option value="9">MXS1202（空气温湿度传感器）</option>
+							<option value="10">MXS1402（土壤温度水分传感器）</option>
+						</select>
+					</td>
+					<td align="left">数据包间隔<input type="text" id="com1"/></td>
+				</tr>
+				<tr>
+					<td align="right">
+						<select id="type2">
+							<option value="0">空置</option>
+							<option value="1">MXS1101（土壤温度）</option>
+							<option value="2">MXS1201（空气温湿度传感器）</option>
+							<option value="3">MXS1301（空气二氧化碳）</option>
+							<option value="4">MXS1401（土壤水分）</option>
+							<option value="5">MXS1501（太阳光照）</option>
+							<option value="6">MXS2101（摄像头）</option>
+							<option value="6">MXS2102（摄像头）</option>
+							<option value="7">MXS2201（GPS定位）</option>
+							<option value="8">MXS4101（接近传感器）</option>
+							<option value="9">MXS1202（空气温湿度传感器）</option>
+							<option value="10">MXS1402（土壤温度水分传感器）</option>
+						</select>
+					</td>
+					<td align="left">数据包间隔<input type="text" id="com2"/></td>
+				</tr>
+				<tr>
+					<td align="right">
+						<select id="type3">
+							<option value="0">空置</option>
+							<option value="1">MXS1101（土壤温度）</option>
+							<option value="2">MXS1201（空气温湿度传感器）</option>
+							<option value="3">MXS1301（空气二氧化碳）</option>
+							<option value="4">MXS1401（土壤水分）</option>
+							<option value="5">MXS1501（太阳光照）</option>
+							<option value="6">MXS2101（摄像头）</option>
+							<option value="6">MXS2102（摄像头）</option>
+							<option value="7">MXS2201（GPS定位）</option>
+							<option value="8">MXS4101（接近传感器）</option>
+							<option value="9">MXS1202（空气温湿度传感器）</option>
+							<option value="10">MXS1402（土壤温度水分传感器）</option>
+						</select>
+					</td>
+					<td align="left">数据包间隔<input type="text" id="com3"/></td>
+				</tr>
+				<tr>
+					<td align="right">
+						<select id="type4"  style="width:225px;">
+							<option value="0">空置</option>
+							<option value="1">MXS1101（土壤温度）</option>
+							<option value="8">MXS4101（接近传感器）</option>
+							<option value="9">MXS1202（空气温湿度传感器）</option>
+						</select>
+					</td>
+					<td align="left">数据包间隔<input type="text" id="com4"/><input type="button" value="更新" onclick="multiCom()"></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

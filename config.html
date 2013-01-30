@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>上传背景图片</title>
+<script type="text/javascript" src="src/xmlrpc/rpc.js"></script>
+</head>
+
+<body onload="urlFunction()">
+	<div style="width:460px;margin:0 auto;">
+		<div style="background:#95AAB4;color:#fff;text-align:left;padding-left:15px;font-size:50px;height:50px;" id="infomation">
+			配置：
+		</div>
+		<div id="canvas" style="width:460px;height:260px;padding-top:100px;background:#eee;line-height:30px;text-align:left;vertical-align:middle;">
+			<form action="" name="upfile_form" method="post" enctype="multipart/form-data" style="margin-left:120px;">
+				选择节点:<select id="node"></select></br>
+				节点备注:<input type="text" id="description"></br>
+				节点&nbsp;url:<input type="text" id="url"></br>
+				精&nbsp;&nbsp;&nbsp;&nbsp;度:<input type="text" id="longitude"></br>
+				纬&nbsp;&nbsp;&nbsp;&nbsp;度:<input type="text" id="latitude"></br>
+				<input type="button" onclick="updateConfig()" value="修改节点备注">
+			</form>
+		</div>
+	</div>
+</body>
+</html>
